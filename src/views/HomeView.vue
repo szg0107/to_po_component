@@ -1,11 +1,3 @@
-<!--
- * @Author: dishuai123 di2860774504@163.com
- * @Date: 2023-03-07 19:44:03
- * @LastEditors: dishuai123 di2860774504@163.com
- * @LastEditTime: 2023-03-08 09:13:56
- * @FilePath: /to_po_component/src/views/HomeView.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 <template>
   <div class="home">
 <!--    <Pagination :page="page" :total="total" :pageSize="pageSize"-->
@@ -29,7 +21,6 @@
 <!--        </ul>-->
 <!--        <p v-if="loading">加载中...</p>-->
 <!--        <p v-if="noMore">没有更多了</p>-->
-<!-- 111 -->
 <!--      </div>-->
     </at-row>
     <SearchBar/>
