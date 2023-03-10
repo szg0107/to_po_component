@@ -12,7 +12,6 @@
         type="datetime"
         placeholder="选择日期时间">
       </at-date-picker>
-      <SearchBar :historyList="historyList"  @searchBtn="searchFor"/>
 <!--      <div class="infinite-list-wrapper" style="overflow:auto">-->
 <!--        <ul-->
 <!--          class="list"-->
@@ -22,15 +21,17 @@
 <!--        </ul>-->
 <!--        <p v-if="loading">加载中...</p>-->
 <!--        <p v-if="noMore">没有更多了</p>-->
+<!-- 111 -->
 <!--      </div>-->
     </at-row>
+    <Search :historyList="historyList"  @searchBtn="searchFor"/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import infoList from '../mixins/infoList'
-
+// let id = 0
 export default {
   name: 'HomeView',
   props: {
@@ -64,21 +65,16 @@ export default {
   },
   mixins: [infoList],
   components: {
-    SearchBar: () => import('../../packages/Search/index.vue')
+    Search: () => import('../../packages/Search/index.vue')
     // Pagination: () => import('../../packages/Pagination/index.vue'),
     // SearchBar: () => import('../../packages/search-main/index.vue'),
     // ExportAndAdd: () => import('../../packages/table-btn/index.vue'),
     // FormTable: () => import('../../packages/table-main/index.vue')
   },
-  computed: {
-    noMore () {
-      return this.count >= 10
-    },
-    disabled () {
-      return this.loading || this.noMore
-    }
-  },
   created () {
+  },
+  watch: {},
+  mounted () {
   },
   methods: {
     initPage (val) {
@@ -94,7 +90,6 @@ export default {
       }, 2000)
     },
     searchFor (input) {
-      // eslint-disable-next-line no-undef
       // 判断输入值是否在历史记录中存在
       const result = this.historyList.findIndex(item => item.value === input)
       // 不存在保存在历史记录中
@@ -105,3 +100,5 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+</style>
