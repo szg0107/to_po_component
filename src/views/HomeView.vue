@@ -1,37 +1,24 @@
 <template>
   <div class="home">
+        <Pagination :page.sync="page" :total="total" :pageSize.sync="pageSize"/>
+    <!--    <SearchBar @getData="initPage" :searchInfo="searchInfo" :tableHead="tableHead"/>-->
+    <!--    <ExportAndAdd/>-->
+    <!--    <FormTable :tableHead="tableHead" :tableData="tableData"/>-->
+    <!--    <my-test/>-->
+<!--    <SearchBar/>-->
 <!--    <Pagination :page="page" :total="total" :pageSize="pageSize"-->
 <!--                @pagination="initPage" @pageChange="pageChange" @sizeChange="sizeChange"/>-->
 <!--    <SearchBar @getData="initPage" :searchInfo="searchInfo" :tableHead="tableHead"/>-->
 <!--    <ExportAndAdd/>-->
 <!--    <FormTable :tableHead="tableHead" :tableData="tableData"/>-->
 <!--    <my-test/>-->
-    <at-row>
-      <at-date-picker
-        v-model="test"
-        type="datetime"
-        placeholder="选择日期时间">
-      </at-date-picker>
-<!--      <div class="infinite-list-wrapper" style="overflow:auto">-->
-<!--        <ul-->
-<!--          class="list"-->
-<!--          v-infinite-scroll="load"-->
-<!--          infinite-scroll-disabled="disabled">-->
-<!--          <li v-for="i in count" class="list-item" :key="i">{{ i }}</li>-->
-<!--        </ul>-->
-<!--        <p v-if="loading">加载中...</p>-->
-<!--        <p v-if="noMore">没有更多了</p>-->
-<!-- 111 -->
-<!--      </div>-->
-    </at-row>
-    <Search :historyList="historyList"  @searchBtn="searchFor"/>
+    <Search :historyList="historyList"  @searchFun="searchFor"/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import infoList from '../mixins/infoList'
-// let id = 0
 export default {
   name: 'HomeView',
   props: {
@@ -65,6 +52,8 @@ export default {
   },
   mixins: [infoList],
   components: {
+    // SearchBar: () => import('../../packages/Search/index.vue')
+    Pagination: () => import('../../packages/Pagination/index.vue'),
     Search: () => import('../../packages/Search/index.vue')
     // Pagination: () => import('../../packages/Pagination/index.vue'),
     // SearchBar: () => import('../../packages/search-main/index.vue'),
@@ -82,19 +71,13 @@ export default {
       console.log(`${val}  pagination`)
       console.log(this.page, this.pageSize)
     },
-    load () {
-      this.loading = true
-      setTimeout(() => {
-        this.count += 2
-        this.loading = false
-      }, 2000)
-    },
     searchFor (input) {
+      console.log(input)
       // 判断输入值是否在历史记录中存在
       const result = this.historyList.findIndex(item => item.value === input)
       // 不存在保存在历史记录中
       if (result === -1) {
-        this.historyList.unshift({ id: this.historyList.length, value: input })
+        this.historyList.unshift({ id: this.historyList.length + '', value: input })
       }
     }
   }

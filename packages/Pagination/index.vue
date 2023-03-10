@@ -1,6 +1,6 @@
 <template>
   <div class="pagination">
-    <el-pagination
+    <at-pagination
       background
       :current-page.sync="currentPage"
       :page-sizes="pageSizes"
@@ -14,16 +14,16 @@
 <script>
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
-  name: 'Pagination', // 分页组件
+  name: 'AtFullPagination', // 分页组件
   data () {
     return {}
   },
   props: {
-    page: { // 当前页
+    page: { // 当前页 引用必须加.sync修饰符
       type: Number,
       default: 1
     },
-    pageSize: { // 每页多少数
+    pageSize: { // 每页多少数 引用必须加.sync修饰符
       type: Number,
       default: 10
     },
@@ -46,7 +46,7 @@ export default {
         return this.page
       },
       set (val) {
-        this.$emit('pageChange', val)
+        this.$emit('update:page', val)
       }
     },
     limit: {
@@ -54,17 +54,15 @@ export default {
         return this.pageSize
       },
       set (val) {
-        this.$emit('sizeChange', val)
+        this.$emit('update:pageSize', val)
       }
     }
   },
   methods: {
     handleSizeChange (val) {
-      this.$emit('pagination')
+      this.currentPage = 1
     },
-    handleCurrentChange (val) {
-      this.$emit('pagination')
-    }
+    handleCurrentChange (val) {}
   }
 }
 </script>
