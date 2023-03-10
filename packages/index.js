@@ -3,8 +3,8 @@ import Pagination from './Pagination/index.vue'
 import SearchBar from './search-main/index.vue'
 import exportAndAdd from './table-btn/index.vue'
 import FormTable from './table-main/index.vue'
-
-const components = [myTest, Pagination, SearchBar, exportAndAdd, FormTable]
+import Search from './Search/index.vue'
+const components = [myTest, Pagination, SearchBar, exportAndAdd, FormTable, Search]
 
 function install (Vue) {
   components.forEach((component) => {

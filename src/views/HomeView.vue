@@ -1,11 +1,3 @@
-<!--
- * @Author: dishuai123 di2860774504@163.com
- * @Date: 2023-03-07 19:44:03
- * @LastEditors: dishuai123 di2860774504@163.com
- * @LastEditTime: 2023-03-08 09:13:56
- * @FilePath: /to_po_component/src/views/HomeView.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 <template>
   <div class="home">
 <!--    <Pagination :page="page" :total="total" :pageSize="pageSize"-->
@@ -20,6 +12,7 @@
         type="datetime"
         placeholder="选择日期时间">
       </at-date-picker>
+      <SearchBar :historyList="historyList"  @searchBtn="searchFor"/>
 <!--      <div class="infinite-list-wrapper" style="overflow:auto">-->
 <!--        <ul-->
 <!--          class="list"-->
@@ -29,10 +22,8 @@
 <!--        </ul>-->
 <!--        <p v-if="loading">加载中...</p>-->
 <!--        <p v-if="noMore">没有更多了</p>-->
-<!-- 111 -->
 <!--      </div>-->
     </at-row>
-    <SearchBar/>
   </div>
 </template>
 
@@ -56,7 +47,19 @@ export default {
     return {
       test: '',
       count: 0,
-      loading: false
+      loading: false,
+      historyList: [
+        { id: '1', value: '三全鲜食（北新泾店）' },
+        { id: '2', value: 'Hot honey 首尔炸鸡（仙霞路）' },
+        { id: '3', value: '新旺角茶餐厅' },
+        { id: '4', value: '泷千家(天山西路店)' },
+        { id: '5', value: '胖仙女纸杯蛋糕（上海凌空店）' },
+        { id: '6', value: '贡茶' },
+        { id: '7', value: '豪大大香鸡排超级奶爸' },
+        { id: '8', value: '茶芝兰（奶茶，手抓饼）' },
+        { id: '9', value: '十二泷町' },
+        { id: '10', value: '星移浓缩咖啡' }
+      ]
     }
   },
   mixins: [infoList],
@@ -89,6 +92,15 @@ export default {
         this.count += 2
         this.loading = false
       }, 2000)
+    },
+    searchFor (input) {
+      // eslint-disable-next-line no-undef
+      // 判断输入值是否在历史记录中存在
+      const result = this.historyList.findIndex(item => item.value === input)
+      // 不存在保存在历史记录中
+      if (result === -1) {
+        this.historyList.unshift({ id: this.historyList.length, value: input })
+      }
     }
   }
 }
