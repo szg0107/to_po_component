@@ -1,33 +1,33 @@
 <template>
   <!-- 菜单栏 -->
   <div class="search-box">
-    <el-form inline label-width="0px" ref="searchForm">
-      <el-form-item>
-        <el-select v-model="searchInfos.key" placeholder="请选择过滤字段" clearable @change="headChange">
+    <at-form inline label-width="0px" ref="searchForm">
+      <at-form-item>
+        <at-select v-model="searchInfos.key" placeholder="请选择过滤字段" clearable @change="headChange">
           <div
             v-for="item in tableHead"
             :key="item.prop">
-            <el-option
+            <at-option
               v-if="!item.searchShow"
               :label="item.label"
               :value="item.prop"/>
           </div>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-select style="width: 100px" v-model="searchInfos.expressions" placeholder="包含" clearable>
-          <el-option
+        </at-select>
+      </at-form-item>
+      <at-form-item>
+        <at-select style="width: 100px" v-model="searchInfos.expressions" placeholder="包含" clearable>
+          <at-option
             v-for="item in containList"
             :key="item.value"
             :label="item.label"
             :value="item.value"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item v-if="searchType === 'text'">
-        <el-input style="width: 150px" v-model="searchInfos.value" clearable/>
-      </el-form-item>
-      <el-form-item v-else-if="searchType === 'date'">
-        <el-date-picker
+        </at-select>
+      </at-form-item>
+      <at-form-item v-if="searchType === 'text'">
+        <at-input style="width: 150px" v-model="searchInfos.value" clearable/>
+      </at-form-item>
+      <at-form-item v-else-if="searchType === 'date'">
+        <at-date-picker
           v-model="date"
           type="daterange"
           align="right"
@@ -38,21 +38,21 @@
           end-placeholder="结束日期"
           :picker-options="pickerOptions"
           @change="dateChange"/>
-      </el-form-item>
-      <el-form-item v-else-if="searchType === 'select'">
-        <el-select v-model="searchInfos.value" placeholder="" clearable>
-          <el-option
+      </at-form-item>
+      <at-form-item v-else-if="searchType === 'select'">
+        <at-select v-model="searchInfos.value" placeholder="" clearable>
+          <at-option
             v-for="item in selectList"
             :key="item.dictKey"
             :label="item.dictValue"
             :value="item.dictKey"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="searchTable" icon="el-icon-search">查询</el-button>
-        <el-button type="primary" @click="resole" icon="el-icon-refresh">重置</el-button>
-      </el-form-item>
-    </el-form>
+        </at-select>
+      </at-form-item>
+      <at-form-item>
+        <at-button type="primary" @click="searchTable('search')" icon="el-icon-search">查询</at-button>
+        <at-button type="primary" @click="reset" icon="el-icon-refresh">重置</at-button>
+      </at-form-item>
+    </at-form>
   </div>
 </template>
 
@@ -60,14 +60,15 @@
 export default {
   name: 'SearchBar',
   props: {
+    // 表头
     tableHead: {
       type: Array,
       default: () => []
     },
+    // 搜索信息
     searchInfo: {
       type: Object,
-      default: () => {
-      }
+      default: () => {}
     }
   },
   data () {
@@ -76,7 +77,9 @@ export default {
       searchType: 'text',
       // 下拉框对应的下拉列表
       selectList: [],
+      // 日期选择
       date: [],
+      // 条件
       containList: [
         {
           label: '包含',
@@ -111,6 +114,7 @@ export default {
           value: 'rl'
         }
       ],
+      // 日期选择快捷键
       pickerOptions: {
         shortcuts: [{
           text: '最近一周',
@@ -137,96 +141,58 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }]
+      }
+    }
+  },
+  computed: {
+    searchInfos: {
+      get () {
+        return this.searchInfo
       },
-      is_data: true, // 是否首次渲染，是检查是否有默认筛选项
-      searchInfos: {}
+      set (val) {
+        this.$emit('update:searchInfo', val)
+      }
     }
   },
   methods: {
-    searchTable () {
-      this.$parent.page = 1
-      this.$parent.initPage(this.searchInfos)
+    // 查询 search 重置查询 resetSearch
+    searchTable (type) {
+      this.$emit('searchTable', type)
     },
-    resole () {
-      this.$parent.searchInfo = {
-        expressions: 'like'
-      }
-      this.$parent.page = 1
-      this.$parent.initPage()
+    // 重置查询条件
+    reset () {
+      this.searchInfos = { expressions: 'like' }
+      this.searchTable('resetSearch')
     },
+    // 字段改变事件
     headChange (val) {
-      if (this.is_data) {
-        this.is_data = false
-      } else {
-        this.$set(this.searchInfos, 'value', '')
-        this.$set(this, 'date', '')
-      }
-      // eslint-disable-next-line eqeqeq
-      const filter = this.tableHead.filter((a) => a.prop === val)[0]
-      if (filter) {
-        this.searchType = filter.search ? filter.search.type : 'text'
-      } else {
-        this.searchType = 'text'
-      }
+      this.$set(this.searchInfos, 'value', '')
+      this.selectList = []
+      // 查找选中的对应字段
+      const filter = this.tableHead.find(a => a.prop === val)
+      // 设置搜索类型
+      this.searchType = filter.search ? filter.search.type : 'text'
+      // 设置搜索对象label值
+      this.searchInfos.label = filter.label
       // 下拉框填入下拉列表
       if (this.searchType === 'select') {
-        const listNumber = this.$parent[filter.search.list]
-        if (listNumber.length > 0) {
-          this.selectList = listNumber
-        } else {
-          let num = 0
-          const setInt = setInterval(() => {
-            const listNumberSetInt = this.$parent[filter.search.list]
-            if (listNumberSetInt.length > 0) {
-              this.selectList = listNumberSetInt
-              clearInterval(setInt)
-            }
-            if (num > 30) {
-              clearInterval(setInt)
-            }
-            // eslint-disable-next-line no-plusplus
-            num++
-          }, 300)
-        }
+        const listNumber = filter.search.list
+        this.selectList = Array.isArray(listNumber) && listNumber.length > 0 ? listNumber : []
       }
       // 如果不是date，就删除不需要的时间字段
       if (this.searchType !== 'date') {
         this.searchInfos.beginDate = undefined
         this.searchInfos.endDate = undefined
+        this.$set(this, 'date', [])
       }
     },
     // 日期change
     dateChange (val) {
       [this.searchInfos.beginDate, this.searchInfos.endDate] = [val[0], val[1]]
     }
-  },
-  watch: {
-    'searchInfo.key': {
-      handler () {
-        this.headChange(this.searchInfo.key)
-      },
-      deep: true
-    },
-    searchInfo: {
-      handler (n) {
-        this.searchInfos = n
-      },
-      deep: true
-    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-/deep/ .el-button {
-  padding: 0 8px;
-  height: 32px;
-  box-sizing: border-box;
-  font-size: 16px;
-  border-radius: 2px;
-}
-
-/deep/ .el-cascader {
-  line-height: inherit;
-}
 </style>
