@@ -23,11 +23,10 @@
             :value="item.value"/>
         </at-select>
       </at-form-item>
-      <at-form-item v-if="searchType === 'text'">
-        <at-input style="width: 150px" v-model="searchInfos.value" clearable/>
-      </at-form-item>
-      <at-form-item v-else-if="searchType === 'date'">
+      <at-form-item>
+        <at-input style="width: 150px" v-if="searchType === 'text'" v-model="searchInfos.value" clearable/>
         <at-date-picker
+          v-else-if="searchType === 'date'"
           v-model="date"
           type="daterange"
           align="right"
@@ -38,15 +37,37 @@
           end-placeholder="结束日期"
           :picker-options="pickerOptions"
           @change="dateChange"/>
-      </at-form-item>
-      <at-form-item v-else-if="searchType === 'select'">
-        <at-select v-model="searchInfos.value" placeholder="" clearable>
+        <at-select v-else-if="searchType === 'select'" v-model="searchInfos.value" placeholder="" clearable>
           <at-option
             v-for="item in selectList"
             :key="item.dictKey"
             :label="item.dictValue"
             :value="item.dictKey"/>
         </at-select>
+      </at-form-item>
+      <at-form-item v-for="(item, index) in tableHeadIsSearch" :key="index" :label="item.label">
+        <at-input style="width: 150px" v-model="searchInfos[item.prop]" v-if="soSearch(item) === 'text'" clearable/>
+        <at-date-picker
+          v-else-if="soSearch(item) === 'date'"
+          v-model="searchInfos[item.prop]"
+          type="daterange"
+          align="right"
+          unlink-panels
+          value-format="yyyy-MM-dd"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :picker-options="pickerOptions"/>
+        <template v-else-if="soSearch(item) === 'select'">
+          <at-select v-model="searchInfos[item.prop]" placeholder="" clearable v-if="item.search.list.length > 0">
+            <at-option
+              v-for="i in item.search.list"
+              :key="i.dictKey"
+              :label="i.dictValue"
+              :value="i.dictKey"/>
+          </at-select>
+          <at-input style="width: 150px" v-model="searchInfos[item.prop]" v-else clearable/>
+        </template>
       </at-form-item>
       <at-form-item>
         <at-button type="primary" @click="searchTable('search')" icon="el-icon-search">查询</at-button>
@@ -152,6 +173,13 @@ export default {
       set (val) {
         this.$emit('update:searchInfo', val)
       }
+    },
+    tableHeadIsSearch () {
+      const newArr = this.tableHead.filter(item => item.isSearch)
+      newArr.forEach(item => {
+        this.$set(this.searchInfos, item.prop, '')
+      })
+      return newArr
     }
   },
   methods: {
@@ -171,9 +199,9 @@ export default {
       // 查找选中的对应字段
       const filter = this.tableHead.find(a => a.prop === val)
       // 设置搜索类型
-      this.searchType = filter.search ? filter.search.type : 'text'
+      this.searchType = this.soSearch(filter)
       // 设置搜索对象label值
-      this.searchInfos.label = filter.label
+      this.searchInfos.label = filter && filter.label ? filter.label : ''
       // 下拉框填入下拉列表
       if (this.searchType === 'select') {
         const listNumber = filter.search.list
@@ -189,10 +217,17 @@ export default {
     // 日期change
     dateChange (val) {
       [this.searchInfos.beginDate, this.searchInfos.endDate] = [val[0], val[1]]
+    },
+    // 查看类型
+    soSearch (obj) {
+      return obj && obj.search ? obj.search.type : 'text'
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+/deep/.el-form-item__label {
+  width: auto!important;
+}
 </style>

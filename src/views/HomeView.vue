@@ -30,7 +30,8 @@ export default {
             value: '产品代号'
           }],
           sortable: true,
-          isFilter: true
+          isFilter: true,
+          isSearch: true
         },
         {
           label: '归零类别',
@@ -45,7 +46,8 @@ export default {
                 dictValue: '测试'
               }
             ]
-          }
+          },
+          isSearch: true
         },
         {
           label: '级别',
@@ -55,7 +57,8 @@ export default {
           search: {
             type: 'select',
             list: []
-          }
+          },
+          isSearch: true
         },
         {
           label: '型号',
@@ -280,7 +283,8 @@ export default {
           isFilter: false,
           search: {
             type: 'date'
-          }
+          },
+          isSearch: true
         },
         {
           label: '问题名称',
