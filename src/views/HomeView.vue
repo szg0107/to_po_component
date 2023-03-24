@@ -309,6 +309,7 @@ export default {
     ExportAndAdd: () => import('../../packages/table-btn/index.vue'),
     FormTable: () => import('../../packages/table-main/index.vue'),
     FiveLinkage: () => import('../../packages/fiveLinkage/index.vue'),
+    // myTest: () => import('../../packages/test/test.vue'),
     Search: () => import('../../packages/Search/index.vue')
   },
   created () {
