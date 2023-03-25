@@ -110,7 +110,8 @@ export default {
           isFilter: false,
           search: {
             type: 'date'
-          }
+          },
+          isSearch: true
         },
         {
           label: '要求归零时间',

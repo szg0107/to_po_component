@@ -1,7 +1,8 @@
 <template>
   <!-- 菜单栏 -->
   <div class="search-box">
-    <at-form inline label-width="0px" ref="searchForm">
+    <at-form inline label-width="auto" ref="searchForm">
+<!--      基础默认部分, 根据选择条件展示对应的元素-->
       <at-form-item>
         <at-select v-model="searchInfos.key" placeholder="请选择过滤字段" clearable @change="headChange">
           <div
@@ -24,7 +25,7 @@
         </at-select>
       </at-form-item>
       <at-form-item>
-        <at-input style="width: 150px" v-if="searchType === 'text'" v-model="searchInfos.value" clearable/>
+        <at-input style="width: 150px" :placeholder="'请输入' + searchCn(searchInfos.key)" v-if="searchType === 'text'" v-model="searchInfos.value" clearable/>
         <at-date-picker
           v-else-if="searchType === 'date'"
           v-model="date"
@@ -37,7 +38,7 @@
           end-placeholder="结束日期"
           :picker-options="pickerOptions"
           @change="dateChange"/>
-        <at-select v-else-if="searchType === 'select'" v-model="searchInfos.value" placeholder="" clearable>
+        <at-select style="width: 150px" :placeholder="'请选择' + searchCn(searchInfos.key)"  v-else-if="searchType === 'select'" v-model="searchInfos.value" clearable>
           <at-option
             v-for="item in selectList"
             :key="item.dictKey"
@@ -45,8 +46,9 @@
             :value="item.dictKey"/>
         </at-select>
       </at-form-item>
+<!--      动态渲染获取到的查询条件-->
       <at-form-item v-for="(item, index) in tableHeadIsSearch" :key="index" :label="item.label">
-        <at-input style="width: 150px" v-model="searchInfos[item.prop]" v-if="soSearch(item) === 'text'" clearable/>
+        <at-input style="width: 150px" :placeholder="'请输入' + item.label" v-model="searchInfos[item.prop]" v-if="soSearch(item) === 'text'" clearable/>
         <at-date-picker
           v-else-if="soSearch(item) === 'date'"
           v-model="searchInfos[item.prop]"
@@ -57,16 +59,17 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          :picker-options="pickerOptions"/>
+          :picker-options="pickerOptions"
+          @change="dateChange"/>
         <template v-else-if="soSearch(item) === 'select'">
-          <at-select v-model="searchInfos[item.prop]" placeholder="" clearable v-if="item.search.list.length > 0">
+          <at-select style="width: 150px" :placeholder="'请选择' + item.label" v-model="searchInfos[item.prop]" clearable v-if="item.search.list.length > 0">
             <at-option
               v-for="i in item.search.list"
               :key="i.dictKey"
               :label="i.dictValue"
               :value="i.dictKey"/>
           </at-select>
-          <at-input style="width: 150px" v-model="searchInfos[item.prop]" v-else clearable/>
+          <at-input style="width: 150px" :placeholder="'请输入' + item.label" v-model="searchInfos[item.prop]" v-else clearable/>
         </template>
       </at-form-item>
       <at-form-item>
@@ -174,6 +177,7 @@ export default {
         this.$emit('update:searchInfo', val)
       }
     },
+    // 根据isSearch展示对应的条件
     tableHeadIsSearch () {
       const newArr = this.tableHead.filter(item => item.isSearch)
       newArr.forEach(item => {
@@ -185,6 +189,7 @@ export default {
   methods: {
     // 查询 search 重置查询 resetSearch
     searchTable (type) {
+      console.log(this.searchInfos)
       this.$emit('searchTable', type)
     },
     // 重置查询条件
@@ -207,27 +212,36 @@ export default {
         const listNumber = filter.search.list
         this.selectList = Array.isArray(listNumber) && listNumber.length > 0 ? listNumber : []
       }
+      // 时间设置默认值
+      if (this.searchType === 'date') {
+        this.searchInfos.beginDate = ''
+        this.searchInfos.endDate = ''
+      }
       // 如果不是date，就删除不需要的时间字段
       if (this.searchType !== 'date') {
-        this.searchInfos.beginDate = undefined
-        this.searchInfos.endDate = undefined
+        delete this.searchInfos.beginDate
+        delete this.searchInfos.endDate
         this.$set(this, 'date', [])
       }
     },
     // 日期change
     dateChange (val) {
-      [this.searchInfos.beginDate, this.searchInfos.endDate] = [val[0], val[1]]
+      this.searchInfos.beginDate = val[0]
+      this.searchInfos.endDate = val[1]
     },
     // 查看类型
     soSearch (obj) {
       return obj && obj.search ? obj.search.type : 'text'
+    },
+    // 获取对应的中文
+    searchCn (key) {
+      const obj = this.tableHead.find(item => item.prop === key)
+      return (obj && obj.label) || ''
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-/deep/.el-form-item__label {
-  width: auto!important;
-}
+
 </style>
