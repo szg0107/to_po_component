@@ -1,18 +1,19 @@
 <template>
   <div class="home">
-        <Pagination :page.sync="page" :total="total" :pageSize.sync="pageSize"/>
-        <SearchBar @searchTable="initPage" :searchInfo.sync="searchInfo" :tableHead="tableHead"/>
-        <Search @searchFun="searchFor" style="margin-bottom: 20px"/>
-        <ExportAndAdd @handleAdd="handleAdd" @handleMultiDelete="handleMultiDelete"/>
-        <FormTable :tableHead="tableHead" :tableData="tableData" style="margin-bottom: 20px"/>
-        <FiveLinkage :dropdownsData="districts" :selectValue.sync="selectValue"/>
-        <!--<my-test/>-->
+    <Pagination :page.sync="page" :total="total" :pageSize.sync="pageSize"/>
+    <SearchBar @searchTable="initPage" :searchInfo.sync="searchInfo" :tableHead="tableHead"/>
+    <Search @searchFun="searchFor" style="margin-bottom: 20px"/>
+    <ExportAndAdd @handleAdd="handleAdd" @handleMultiDelete="handleMultiDelete"/>
+    <FormTable :tableHead="tableHead" :tableData="tableData" style="margin-bottom: 20px"/>
+    <FiveLinkage :dropdownsData="districts" :selectValue.sync="selectValue"/>
+    <!--<my-test/>-->
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import districts from '../../packages/fiveLinkage/data.json'
+
 export default {
   name: 'HomeView',
   data () {
@@ -299,13 +300,13 @@ export default {
           filters: [],
           isFilter: false
         }
-      ],
+      ], // 表头
       searchInfo: {
         expressions: 'like'
-      },
-      tableData: [{ productCode: '产品代号', updateBtnShow: true, delBtnShow: true }, { productCode: '产品代号2' }],
-      districts: districts.districts,
-      selectValue: {}
+      }, // 搜索内容
+      tableData: [{ productCode: '产品代号', updateBtnShow: true, delBtnShow: true }, { productCode: '产品代号2' }], // 表格数据
+      districts: districts.districts, // 省市级联数据
+      selectValue: {} // 省市级联选中数据
     }
   },
   components: {
@@ -344,5 +345,5 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 </style>

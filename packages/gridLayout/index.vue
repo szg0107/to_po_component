@@ -1,16 +1,51 @@
 <template>
-<div></div>
+  <div>
+    <at-row v-for="(row,index) in layoutList" :key="index" :gutter="row.gutter">
+      <at-col class="grid-content" v-for="(col,index2) in row.col"
+              :span="col.span" :offset="col.offset" :key="index-index2">
+        <slot :name="col.name" />
+      </at-col>
+    </at-row>
+  </div>
 </template>
 
 <script>
 export default {
   name: 'gridLayout', // 栅格布局
+  props: {
+    /** 布局列表 数据格式
+     * layoutList: [
+      {
+        gutter: 50,
+        col: [
+            {
+              name: 'header',
+              span: 12
+            },
+          ]
+       }
+     ] // 布局集合 */
+    layoutList: {
+      type: Array,
+      default: () => [],
+      required: true
+    }
+  },
   data () {
     return {}
   }
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.el-row {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.el-col {
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
 </style>
