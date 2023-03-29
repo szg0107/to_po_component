@@ -7,6 +7,29 @@
     <FormTable :tableHead="tableHead" :tableData="tableData" style="margin-bottom: 20px"/>
     <FiveLinkage :dropdownsData="districts" :selectValue.sync="selectValue"/>
     <!--<my-test/>-->
+    <at-select
+      v-model="value2"
+      multiple
+      collapse-tags
+      @change="setTree"
+      placeholder="请选择">
+      <at-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value">
+      </at-option>
+    </at-select>
+    <at-tree
+      :data="data"
+      show-checkbox
+      default-expand-all
+      check-strictly
+      node-key="id"
+      ref="tree"
+      highlight-current
+      @check="handleCheck"
+      :props="defaultProps"/>
   </div>
 </template>
 
@@ -306,7 +329,107 @@ export default {
       }, // 搜索内容
       tableData: [{ productCode: '产品代号', updateBtnShow: true, delBtnShow: true }, { productCode: '产品代号2' }], // 表格数据
       districts: districts.districts, // 省市级联数据
-      selectValue: {} // 省市级联选中数据
+      selectValue: {}, // 省市级联选中数据
+      layoutList: [
+        {
+          gutter: 50,
+          col: [
+            {
+              name: 'header',
+              span: 6
+            },
+            {
+              name: 'header1',
+              span: 6
+            },
+            {
+              name: 'header2',
+              span: 6
+            },
+            {
+              name: 'header3',
+              span: 6
+            }
+          ]
+        },
+        {
+          gutter: 50,
+          col: [
+            {
+              name: 'main',
+              span: 6
+            },
+            {
+              name: 'main2',
+              span: 6
+            },
+            {
+              name: 'main3',
+              span: 6
+            },
+            {
+              name: 'main3',
+              span: 6
+            }
+          ]
+        }
+      ],
+      value2: [],
+      options: [{
+        value: 1,
+        label: '一级 1'
+      }, {
+        value: 4,
+        label: '二级 1-1'
+      }, {
+        value: 9,
+        label: '三级 1-1-1'
+      }, {
+        value: 10,
+        label: '三级 1-1-2'
+      }, {
+        value: '选项5',
+        label: '北京烤鸭'
+      }],
+      data: [{
+        id: 1,
+        label: '一级 1',
+        children: [{
+          id: 4,
+          label: '二级 1-1',
+          children: [{
+            id: 9,
+            label: '三级 1-1-1'
+          }, {
+            id: 10,
+            label: '三级 1-1-2'
+          }]
+        }]
+      }, {
+        id: 2,
+        label: '一级 2',
+        children: [{
+          id: 5,
+          label: '二级 2-1'
+        }, {
+          id: 6,
+          label: '二级 2-2'
+        }]
+      }, {
+        id: 3,
+        label: '一级 3',
+        children: [{
+          id: 7,
+          label: '二级 3-1'
+        }, {
+          id: 8,
+          label: '二级 3-2'
+        }]
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     }
   },
   components: {
@@ -315,6 +438,7 @@ export default {
     ExportAndAdd: () => import('../../packages/table-btn/index.vue'),
     FormTable: () => import('../../packages/table-main/index.vue'),
     FiveLinkage: () => import('../../packages/fiveLinkage/index.vue'),
+    // TopMiddle: () => import('../../packages/gridLayout/index.vue'),
     // myTest: () => import('../../packages/test/test.vue'),
     Search: () => import('../../packages/Search/index.vue')
   },
@@ -341,6 +465,17 @@ export default {
     },
     handleMultiDelete () {
       this.tableData.shift()
+    },
+    setTree (val) {
+      this.$refs.tree.setCheckedKeys(val)
+    },
+    handleCheck (checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys) {
+      // console.log(checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys)
+      if (this.value2.includes(checkedNodes.id)) {
+        this.value2.splice(this.value2.findIndex(item => item === checkedNodes.id), 1)
+      } else {
+        this.value2.push(checkedNodes.id)
+      }
     }
   }
 }

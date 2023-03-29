@@ -39,13 +39,20 @@ export default {
 
 <style lang="scss" scoped>
 .el-row {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   &:last-child {
     margin-bottom: 0;
   }
 }
 .el-col {
   border-radius: 4px;
-  margin-bottom: 10px;
+}
+// 奇数
+.el-col:nth-child(odd){
+  background: #3E5E90;
+}
+// 偶数
+.el-col:nth-child(even){
+  background: #254679;
 }
 </style>
